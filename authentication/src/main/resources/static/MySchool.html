@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MySchool Portal</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #f0f4ff, #e6faff);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h2 {
+            text-align: center;
+            color: #2a4d8f;
+        }
+        .form-section {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #2a4d8f;
+            outline: none;
+        }
+        button {
+            background: #2a4d8f;
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #1d3566;
+        }
+        .success-box, .error-box {
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .success-box {
+            background: #e6f4ea;
+            color: #137333;
+            border: 1px solid #137333;
+        }
+        .error-box {
+            background: #fce8e6;
+            color: #c5221f;
+            border: 1px solid #c5221f;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Welcome to MySchool</h2>
+
+    <!-- REGISTER SCHOOL FORM -->
+    <div class="form-section">
+        <h3>Register New School</h3>
+        <form id="registerForm">
+            <label for="schoolName">School Name</label>
+            <input id="schoolName" name="schoolName" required>
+
+            <label for="address">Address</label>
+            <input id="address" name="address" required>
+
+            <label for="branch">Branch</label>
+            <input id="branch" name="branch" required>
+
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required>
+
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" required>
+
+            <button type="submit">Register</button>
+        </form>
+        <div id="registerResponse"></div>
+    </div>
+</div>
+
+<script>
+    // --- HANDLER: REGISTER SCHOOL ---
+    document.getElementById('registerForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const responseDiv = document.getElementById('registerResponse');
+        responseDiv.innerHTML = "⏳ Processing registration...";
+
+        const formData = new FormData(event.target);
+        const payload = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/auth/registerSchool', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                responseDiv.innerHTML = `
+      <div class="success-box">
+        ✅ <strong>Success! School Registered.</strong><br>
+        Your Unique School Code is:
+        <span style="font-size: 1.2em; font-weight: bold; color: #000;">
+          ${result.schoolCode}
+        </span>
+      </div>`;
+                event.target.reset();
+            } else {
+                // Show backend-provided errorMessage
+                const errMsg = result.errorMessage || result.error || result.message || "Registration failed.";
+                responseDiv.innerHTML = `
+      <div class="error-box">
+        ❌ <strong>Registration Failed:</strong><br>
+        ${errMsg}
+      </div>`;
+            }
+
+        } catch (error) {
+            console.error("JavaScript Error:", error);
+            responseDiv.innerHTML = `<div class="error-box">⚠️ Network error. Connection failed or refused.</div>`;
+        }
+    });
+</script>
+</body>
+</html>

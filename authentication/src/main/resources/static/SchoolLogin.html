@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Portal Login</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #cbd5e1;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            background-color: #ffffff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Search styling wrapper */
+        .search-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-lookup {
+            padding: 0.75rem 1rem;
+            background-color: #64748b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .btn-lookup:hover {
+            background-color: #475569;
+        }
+
+        .btn-wrapper {
+            margin-top: 1.75rem;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0; }
+        }
+
+
+        .error { color: #dc2626; }
+        .success { color: #16a34a; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>School Portal Login</h2>
+    <form id="loginForm">
+
+        <!-- 1st Step: School Code Lookup & Selection -->
+        <div class="form-group">
+            <label for="schoolCode">School Code</label>
+            <div class="search-wrapper">
+                <input
+                        type="text"
+                        id="schoolCode"
+                        placeholder="Enter code (e.g., SCH101)"
+                        required
+                >
+                <button type="button" id="findSchoolBtn" class="btn-lookup">Verify Code</button>
+            </div>
+        </div>
+
+
+
+        <div id="schoolNameDisplay" style="min-height: 20px; margin: 4px 0 12px 0;"></div>
+
+
+        <!-- 2nd Field: Email -->
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+                    type="email"
+                    id="email"
+                    placeholder="name@school.com"
+                    required
+            >
+        </div>
+
+        <!-- 3rd Field: Password -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input
+                    type="password"
+                    id="password"
+                    placeholder="••••••••"
+                    required
+            >
+        </div>
+
+        <div class="btn-wrapper">
+            <button type="submit" class="btn-login" id="loginBtn">Login</button>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+    </form>
+</div>
+
+
+
+
+<script>
+    const schoolCodeInput = document.getElementById('schoolCode');
+    const findSchoolBtn = document.getElementById('findSchoolBtn');
+    const schoolNameDisplay = document.getElementById('schoolNameDisplay'); // Make sure your HTML has an element with this ID below the input
+    const loginForm = document.getElementById('loginForm');
+    const statusMessage = document.getElementById('statusMessage');
+
+    // Action 1: Verify Code against Spring Boot /auth/findSchool Endpoint
+    findSchoolBtn.addEventListener('click', async () => {
+        const codeValue = schoolCodeInput.value.trim();
+
+        function showMessage(text, type) {
+            const statusMessage = document.getElementById('statusMessage');
+            if (!statusMessage) return; // Guard clause in case element ID differs
+
+            statusMessage.textContent = text;
+            statusMessage.className = 'status-message'; // resets classes
+
+            if (type === 'error') {
+                statusMessage.style.color = '#c5221f'; // matching your red error-box style
+            } else if (type === 'success') {
+                statusMessage.style.color = '#137333'; // matching your green success-box style
+            } else {
+                statusMessage.style.color = '#000000'; // neutral fallback text
+            }
+        }
+
+        if (!codeValue) {
+            showMessage('Please provide a school code to search.', 'error');
+            return;
+        }
+
+        showMessage('Searching database...', '');
+        schoolNameDisplay.textContent = 'Verifying...';
+        schoolNameDisplay.style.animation = 'none';
+
+        try {
+            const response = await fetch(`/auth/findSchool?schoolCode=${encodeURIComponent(codeValue)}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            // Parse JSON even for error blocks (Spring Boot handles exceptions with JSON objects)
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.message || 'School code not recognized.');
+            }
+
+            // Clean, structured JSON reading
+            const data = await response.json();
+
+            // Apply text, color red, and trigger continuous CSS blinking animation
+            schoolNameDisplay.textContent = data.schoolName;
+            schoolNameDisplay.style.color = '#c5221f';
+            schoolNameDisplay.style.fontWeight = 'bold';
+            schoolNameDisplay.style.animation = 'blinker 1s linear infinite';
+
+            showMessage('School verified successfully!', 'success');
+
+        } catch (error) {
+            schoolNameDisplay.textContent = '';
+            showMessage(error.message, 'error');
+        }
+    });
+
+
+    // --- Step 2: Handle Authentication & JWT Save ---
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+
+        const selectedSchoolCode = schoolCodeInput.value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        function showMessage(text, type) {
+            const statusMessage = document.getElementById('statusMessage');
+            if (!statusMessage) return; // Guard clause in case element ID differs
+
+            statusMessage.textContent = text;
+            statusMessage.className = 'status-message'; // resets classes
+
+            if (type === 'error') {
+                statusMessage.style.color = '#c5221f'; // matching your red error-box style
+            } else if (type === 'success') {
+                statusMessage.style.color = '#137333'; // matching your green success-box style
+            } else {
+                statusMessage.style.color = '#000000'; // neutral fallback text
+            }
+        }
+
+        if (!selectedSchoolCode) {
+            showMessage('Please verify and select your school name first.', 'error');
+            return;
+        }
+
+        showMessage('Logging in...', '');
+
+        // Constructing input DTO
+        const loginDto = {
+            schoolCode: selectedSchoolCode,
+            email: email,
+            password: password
+        };
+
+        try {
+            const response = await fetch('/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(loginDto)
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.message || 'Invalid email or password.');
+            }
+
+            const result = await response.json();
+
+            // Assuming token is returned as { token: "eyJhbG..." } or { jwt: "..." }
+            const token = result.token || result.jwt;
+
+            if (token) {
+                // Save JWT token locally
+                localStorage.setItem('jwt_token', token);
+                showMessage('Login successful! Redirecting...', 'success');
+
+                // Redirect to home page after a brief moment
+                setTimeout(() => {
+                    window.location.href = '/home'; // Adjust destination route if needed
+                },
+                    1000);
+            } else {
+                throw new Error('Token not received from authentication server.');
+            }
+        } catch (error) {
+            showMessage(error.message, 'error');
+        }
+    });  // Helper to update status messagesfunction showMessage(text, type) {statusMessage.textContent = text;statusMessage.className = 'status-message';if (type) statusMessage.classList.add(type);
+
+</script>
+</body>
+</html>

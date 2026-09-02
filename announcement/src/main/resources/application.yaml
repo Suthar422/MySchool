@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: announcement
+
+server:
+  port: 5001
+
+
+

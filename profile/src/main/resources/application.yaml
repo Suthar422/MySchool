@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: profile
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/myschooldb
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 5002
+
+school:
+  code: "st123"
