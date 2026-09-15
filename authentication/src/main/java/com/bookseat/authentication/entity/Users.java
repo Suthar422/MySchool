@@ -1,21 +1,27 @@
 package com.bookseat.authentication.entity;
 
-
-import com.bookseat.authentication.dto.ROLE;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-@Table(name = "Users")
 @Data
-public class Users {
-
+public class Users{
     @Id
-    private String email;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    //email
+    private String username;
     private String password;
     private String schoolCode;
-
-    @Enumerated(EnumType.STRING)
-    private ROLE role;
-
 }

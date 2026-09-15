@@ -1,13 +1,13 @@
 package com.bookseat.authentication.dto;
 
+
 import lombok.Data;
 
 @Data
 public class AuthRequest {
-    //user request details
-    private String email; //host name
+
+    //this is your email
+    private String username;
     private String password;
-    private String schoolCode;
-  //  private String role;
 
 }

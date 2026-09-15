@@ -1,9 +1,5 @@
 package com.myschool.profile.service.impl;
 
-import com.myschool.profile.dto.StudentDto;
-import com.myschool.profile.entity.Student;
-import com.myschool.profile.repository.StudentRepository;
-import com.myschool.profile.service.StudentService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

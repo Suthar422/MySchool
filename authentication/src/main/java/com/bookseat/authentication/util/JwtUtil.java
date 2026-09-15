@@ -14,17 +14,16 @@ import java.util.Date;
 public class JwtUtil {
 
     // Use a strong secret (at least 32 chars)
-    private final String SECRET = "mySchoolSecretKeyForJwtGeneration@Jwt!1234567890";
+    private final String SECRET = "mySuperSecretKeyForJwtGeneration@Jwt!1234567890";
     private final SecretKey KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
-    private final long EXPIRATION_TIME = 1000 *60 * 60L; // 1 hour
+    private final long EXPIRATION_TIME = 1000 * 60 * 60L; // 1 hour
 
-    public String generateToken(String username, String schoolCode, String role) {
+    public String generateToken(String username) {
         return Jwts.builder()
-                .claim("username", username)
-                .claim("schoolCode", schoolCode)
-                .claim("role", role)
+                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
+
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(KEY, SignatureAlgorithm.HS256)
                 .compact();
