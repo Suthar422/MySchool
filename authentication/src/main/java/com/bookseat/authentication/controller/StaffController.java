@@ -2,7 +2,6 @@ package com.bookseat.authentication.controller;
 
 
 
-import com.bookseat.authentication.config.UserPrincipal;
 import com.bookseat.authentication.dto.StaffDto;
 import com.bookseat.authentication.entity.Staff;
 import com.bookseat.authentication.entity.Users;
@@ -26,7 +25,7 @@ public class StaffController {
         this.staffService = staffService;
     }
 
-    @GetMapping("/staffs")
+    @GetMapping("/staff")
     public ResponseEntity<List<Staff>> getStaffs(Authentication authentication) {
         Users userPrincipal = (Users) authentication.getPrincipal();
         String schoolCode = userPrincipal.getSchoolCode();

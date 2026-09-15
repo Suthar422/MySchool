@@ -1,11 +1,8 @@
 package com.bookseat.authentication.config;
 
-import com.bookseat.authentication.dto.Permissions;
-import com.bookseat.authentication.dto.ROLE;
 import com.bookseat.authentication.filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -30,17 +27,10 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
-                        auth
-                                .requestMatchers(HttpMethod.GET).permitAll()
-                                .requestMatchers("/auth/**").permitAll()
-                                //.requestMatchers("/register", "/login", "/static/**").permitAll()
+                        auth.requestMatchers("/register", "/login", "/static/**").permitAll()
                                 .requestMatchers("/**/*.html", "/**/*.css", "/**/*.js").permitAll()
-                                //role-based access
-                                 .requestMatchers("/profile/**").permitAll()
-                                .requestMatchers(HttpMethod.DELETE).hasRole(ROLE.ADMIN.name())
-                                //permission-based access
-                               // .requestMatchers(HttpMethod.POST, "/profile/**").hasAuthority(Permissions.WRITE.name())
 
+                        .requestMatchers("/h2-console/**").permitAll()
                                 .anyRequest().authenticated())
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.
@@ -70,7 +60,6 @@ public class SecurityConfig {
 
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-
 
         return daoAuthenticationProvider;
     }
