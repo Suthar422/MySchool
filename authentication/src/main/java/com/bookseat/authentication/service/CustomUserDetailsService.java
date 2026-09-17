@@ -26,9 +26,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
-        Users user  = usersRepository.findByUsername(email)
+    public UserPrincipal loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
+        log.info("Loading user by username: {}", email);
+        Users user  = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
+
+        log.info("User found: {}", user);
         return new UserPrincipal(user);
     }
 
@@ -37,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     //save user details
     public Users saveUserDetails(AuthRequest authRequest) {
         Users user = new Users();
-        user.setUsername(authRequest.getUsername());
+        user.setEmail(authRequest.getEmail());
         user.setPassword(passwordEncoder.encode(authRequest.getPassword()));
         log.info("Saving user details: {}", user);
         return usersRepository.save(user);
@@ -45,6 +48,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public Users fetchUserByName(String username) {
         log.info("Fetching user by name: {}", username);
-        return usersRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return usersRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }

@@ -25,13 +25,13 @@ public class StaffController {
         this.staffService = staffService;
     }
 
-    @GetMapping("/staff")
-    public ResponseEntity<List<Staff>> getStaffs(Authentication authentication) {
-        Users userPrincipal = (Users) authentication.getPrincipal();
-        String schoolCode = userPrincipal.getSchoolCode();
-        log.info("User Principal: {}", schoolCode);
+    @GetMapping("/staffs")
+    public ResponseEntity<List<Staff>> getStaffs() {
+//        Users userPrincipal = (Users) authentication.getPrincipal();
+//        String schoolCode = userPrincipal.getSchoolCode();
+//        log.info("User Principal: {}", schoolCode);
 
-        return new ResponseEntity<>(staffService.findAllBySchoolCode(schoolCode), HttpStatus.OK);
+        return new ResponseEntity<>(staffService.findAllBySchoolCode(), HttpStatus.OK);
     }
 
 

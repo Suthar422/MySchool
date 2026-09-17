@@ -7,6 +7,7 @@ import com.bookseat.authentication.entity.Users;
 import com.bookseat.authentication.repository.StaffRepository;
 import com.bookseat.authentication.repository.UsersRepository;
 import com.bookseat.authentication.service.StaffService;
+import com.bookseat.authentication.util.SchoolUtility;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +37,8 @@ public class StaffServiceImpl implements StaffService {
 
 
     @Override
-    public List<Staff> findAllBySchoolCode(String schoolCode) {
+    public List<Staff> findAllBySchoolCode() {
+        String schoolCode = SchoolUtility.extractSchoolCode();
         log.info("Finding all staff");
         return staffRepository.findBySchoolCode(sort, schoolCode);
     }
@@ -59,7 +61,7 @@ public class StaffServiceImpl implements StaffService {
 
         log.info("Saving staff as user: {}", staffDto);
         Users users = new Users();
-        users.setUsername(staffDto.getEmail());
+        users.setEmail(staffDto.getEmail());
         //currently using hard-coded password
         users.setPassword("Staff123");
         usersRepository.save(users);

@@ -2,6 +2,7 @@ package com.bookseat.authentication.config;
 
 import com.bookseat.authentication.dto.ROLE;
 import com.bookseat.authentication.entity.Users;
+import lombok.Builder;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,9 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+
 public class UserPrincipal implements UserDetails {
 
-    private Users users;
+    private final Users users;
 
     private ROLE role;
 
@@ -32,7 +34,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return users.getUsername();
+        return users.getEmail();
     }
 
 

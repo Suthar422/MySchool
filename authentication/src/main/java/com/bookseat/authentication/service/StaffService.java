@@ -10,7 +10,7 @@ import java.util.List;
 public interface StaffService {
 
 
-    List<Staff> findAllBySchoolCode(String schoolCode);
+    List<Staff> findAllBySchoolCode();
 
     Staff findStaffByName(String name);
 

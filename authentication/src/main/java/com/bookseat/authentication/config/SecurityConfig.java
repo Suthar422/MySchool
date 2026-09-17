@@ -29,8 +29,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/register", "/login", "/static/**").permitAll()
                                 .requestMatchers("/**/*.html", "/**/*.css", "/**/*.js").permitAll()
-
-                        .requestMatchers("/h2-console/**").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/profile/**").authenticated()
                                 .anyRequest().authenticated())
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.

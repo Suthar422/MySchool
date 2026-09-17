@@ -11,12 +11,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SchoolUtility {
 
     //extract school code from authentication jwt token
-    public static String extractSchoolCode(SecurityContextHolder securityContextHolder) {
-        Authentication authentication = securityContextHolder.getContext().getAuthentication();
+    public static String extractSchoolCode() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Authentication: {}", authentication);
-        Users userPrincipal = (Users) authentication.getPrincipal();
-        String schoolCode = userPrincipal.getSchoolCode();
-        log.info("School Code: {}", schoolCode);
-        return schoolCode;
+//        Users userPrincipal = (Users) authentication.getPrincipal();
+//        String schoolCode = userPrincipal.getSchoolCode();
+//        log.info("School Code: {}", schoolCode);
+//        return schoolCode;
+
+        if (authentication != null && authentication.getPrincipal() instanceof Users) {
+            Users user = (Users) authentication.getPrincipal();
+            return user.getSchoolCode();
+        }
+        return null;
     }
 }
+
+
