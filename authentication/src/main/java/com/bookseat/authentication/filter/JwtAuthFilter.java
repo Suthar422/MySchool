@@ -1,5 +1,6 @@
 package com.bookseat.authentication.filter;
 
+import com.bookseat.authentication.config.UserPrincipal;
 import com.bookseat.authentication.service.CustomUserDetailsService;
 import com.bookseat.authentication.util.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -43,9 +44,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserPrincipal userDetails = userDetailsService.loadUserByUsername(username);
 
-            if (jwtUtil.validateToken(jwtToken, userDetails.getUsername())) {
+            if (jwtUtil.validateToken(jwtToken, userDetails.getUsername(), userDetails.getSchoolCode())) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

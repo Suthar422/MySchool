@@ -56,14 +56,14 @@ public class AuthController {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
         );
-        log.info("Authentication Successful and setting Security Context");
+        log.info("Authentication Successful and setting Security Context: {}", authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         log.info("User Authenticated");
         final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authRequest.getEmail());
         log.info("User Details Loaded");
         log.info("Generating JWT Token");
-        final String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
+        final String jwtToken = jwtUtil.generateToken(principal);
         log.info("JWT Token Generated  {}", jwtToken);
         return jwtToken;
     }

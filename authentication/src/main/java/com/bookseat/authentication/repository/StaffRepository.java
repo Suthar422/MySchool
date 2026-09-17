@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface StaffRepository extends JpaRepository<Staff, Long> {
 
-    Staff findStaffByNameAndSchoolCode(String name, String schoolCode);
+    Staff findStaffByName(String name);
 
     List<Staff> findBySchoolCode(Sort sort, String schoolCode);
 }

@@ -1,8 +1,10 @@
 package com.bookseat.authentication.util;
 
 
+import com.bookseat.authentication.config.UserPrincipal;
 import com.bookseat.authentication.entity.Users;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -19,9 +21,10 @@ public class SchoolUtility {
 //        log.info("School Code: {}", schoolCode);
 //        return schoolCode;
 
-        if (authentication != null && authentication.getPrincipal() instanceof Users) {
-            Users user = (Users) authentication.getPrincipal();
-            return user.getSchoolCode();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            log.info("User Principal: {}", userPrincipal);
+            return userPrincipal.getSchoolCode();
         }
         return null;
     }

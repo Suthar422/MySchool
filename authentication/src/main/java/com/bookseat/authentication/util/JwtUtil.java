@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtil {
 
     // Use a strong secret (at least 32 chars)
@@ -19,12 +21,12 @@ public class JwtUtil {
 
     private final long EXPIRATION_TIME = 1000 * 60 * 60L; // 1 hour
 
-    public String generateToken(String username) {
+    public String generateToken(UserUtil principal) {
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .subject(principal.getUsername())
+                .issuer(principal.getSchoolCode())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -33,16 +35,23 @@ public class JwtUtil {
         return extractClaims(token).getSubject();
     }
 
+    public String extractSchoolCode(String token) {
+        String schoolCode = extractClaims(token).getIssuer();
+        log.info("extractSchoolCode: {}", schoolCode);
+        return schoolCode;
+    }
+
     public Claims extractClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(KEY)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    public boolean validateToken(String token, String username) {
+    public boolean validateToken(String token, String username, String schoolCode) {
         return extractUsername(token).equals(username) &&
+                extractSchoolCode(token).equals(schoolCode) &&
                 !isTokenExpired(token);
     }
 

@@ -21,7 +21,7 @@ import java.util.List;
 public class StaffServiceImpl implements StaffService {
 
 //    @Value("${school.code}")
-    private final String schoolCode = "ST-ST21";
+//    private final String schoolCode = "ST-ST21";
 
     private final StaffRepository staffRepository;
 
@@ -39,14 +39,14 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public List<Staff> findAllBySchoolCode() {
         String schoolCode = SchoolUtility.extractSchoolCode();
-        log.info("Finding all staff");
+        log.info("Finding all staff for school code: {}", schoolCode);
         return staffRepository.findBySchoolCode(sort, schoolCode);
     }
 
     @Override
     public Staff findStaffByName(String name) {
         log.info("Finding staff with name: {}", name);
-        return staffRepository.findStaffByNameAndSchoolCode(name, schoolCode);
+        return staffRepository.findStaffByName(name);
     }
 
     @Override
